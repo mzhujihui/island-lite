@@ -1,32 +1,32 @@
-import { InlineConfig, build as viteBuild } from 'vite'
-import { CLIENT_ENTRY_PATH, SERVER_ENTRY_PATH } from './constants'
-import type { RollupOutput } from "rollup";
-import { join, resolve } from "path";
-import fs from "fs-extra";
+import { InlineConfig, build as viteBuild } from 'vite';
+import { CLIENT_ENTRY_PATH, SERVER_ENTRY_PATH } from './constants';
+import type { RollupOutput } from 'rollup';
+import { join, resolve } from 'path';
+import fs from 'fs-extra';
 import pluginReact from '@vitejs/plugin-react';
-import ora from "ora";
-import { pathToFileURL } from 'url';  
+// import ora from 'ora';
+import { pathToFileURL } from 'url';
 
 export async function bundle(root: string) {
   try {
     const resolveViteConfig = (isServer: boolean): InlineConfig => {
       return {
-        mode: "production",
+        mode: 'production',
         root,
         plugins: [pluginReact()],
         build: {
           ssr: isServer,
-          outDir: isServer ? ".temp" : "build",
+          outDir: isServer ? '.temp' : 'build',
           rollupOptions: {
             input: isServer ? SERVER_ENTRY_PATH : CLIENT_ENTRY_PATH,
             output: {
-              format: isServer ? "cjs" : "esm"
+              format: isServer ? 'cjs' : 'esm'
             }
           }
         }
-      }
-    }
-    console.log("Building client + server bundles...")
+      };
+    };
+    console.log('Building client + server bundles...');
     const [clientBundle, serverBundle] = await Promise.all([
       // client build
       viteBuild(resolveViteConfig(false)),
@@ -34,8 +34,8 @@ export async function bundle(root: string) {
       viteBuild(resolveViteConfig(true))
     ]);
     return [clientBundle, serverBundle] as [RollupOutput, RollupOutput];
-  } catch(e) {
-    console.log(e)
+  } catch (e) {
+    console.log(e);
   }
 }
 
@@ -61,19 +61,18 @@ export async function renderPage(
         <div id="root">${appHtml}</div>
         <script type="module" src="/${clientChunk?.fileName}"></script>
       </body>
-    </html>`
-  .trim();
+    </html>`.trim();
   // const spinner = ora();
   // spinner.start("Building client + server bundles...");
-  await fs.writeFile(join(root, "build", "index.html"), html);
-  await fs.remove(join(root, ".temp"));
+  await fs.writeFile(join(root, 'build', 'index.html'), html);
+  await fs.remove(join(root, '.temp'));
 }
 
 export async function build(root: string = process.cwd()) {
   // 1. bundle - client 端 + server 端
   const [clientBundle] = await bundle(root);
   // 2. 引入 server-entry 模块
-  const serverEntryPath = resolve(root, ".temp", "ssr-entry.js");
+  const serverEntryPath = resolve(root, '.temp', 'ssr-entry.js');
   // 3. 服务端渲染，产出 HTML
   const { render } = await import(pathToFileURL(serverEntryPath));
   await renderPage(render, root, clientBundle);
