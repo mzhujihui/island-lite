@@ -1,9 +1,11 @@
 import { InlineConfig, build as viteBuild } from 'vite'
 import { CLIENT_ENTRY_PATH, SERVER_ENTRY_PATH } from './constants'
 import type { RollupOutput } from "rollup";
-import * as path from "path";
-import * as fs from "fs-extra";
+import { join, resolve } from "path";
+import fs from "fs-extra";
 import pluginReact from '@vitejs/plugin-react';
+import ora from "ora";
+import { pathToFileURL } from 'url';  
 
 export async function bundle(root: string) {
   try {
@@ -61,16 +63,18 @@ export async function renderPage(
       </body>
     </html>`
   .trim();
-  await fs.writeFile(path.join(root, "build", "index.html"), html);
-  await fs.remove(path.join(root, ".temp"));
+  // const spinner = ora();
+  // spinner.start("Building client + server bundles...");
+  await fs.writeFile(join(root, "build", "index.html"), html);
+  await fs.remove(join(root, ".temp"));
 }
 
 export async function build(root: string = process.cwd()) {
   // 1. bundle - client 端 + server 端
   const [clientBundle] = await bundle(root);
   // 2. 引入 server-entry 模块
-  const serverEntryPath = path.resolve(root, ".temp", "ssr-entry.js");
+  const serverEntryPath = resolve(root, ".temp", "ssr-entry.js");
   // 3. 服务端渲染，产出 HTML
-  const { render } = require(serverEntryPath);
+  const { render } = await import(pathToFileURL(serverEntryPath));
   await renderPage(render, root, clientBundle);
 }
