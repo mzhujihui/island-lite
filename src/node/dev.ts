@@ -4,6 +4,7 @@ import pluginConfig from './plugin-island/config';
 import pluginReact from '@vitejs/plugin-react';
 import { PACKAGE_ROOT } from './constants';
 import { resolveConfig } from './config';
+import { pluginRoutes } from './plugin-routes';
 
 export async function createDevServer(
   root: string,
@@ -12,11 +13,14 @@ export async function createDevServer(
   const config = await resolveConfig(root, 'serve', 'development');
   console.log('配置文件信息', config.siteData);
   return createServer({
-    root,
+    root: PACKAGE_ROOT,
     plugins: [
       pluginIndexHtml(),
       pluginReact(),
-      pluginConfig(config, restartServer)
+      pluginConfig(config, restartServer),
+      pluginRoutes({
+        root: config.root
+      })
     ],
     server: {
       fs: {

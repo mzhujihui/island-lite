@@ -8,7 +8,7 @@
     "start": "tsup --watch",
     "build": "tsup",
     "lint": "eslint --fix --ext .ts,.tsx,.js,.jsx ./",
-    "test:unit": "vitest ui",
+    "test:unit": "vitest run",
     "test:e2e": "playwright test",
     "prepare:e2e": "tsx scripts/prepare-e2e.ts"
   },
@@ -26,6 +26,7 @@
   "devDependencies": {
     "@commitlint/cli": "^17.6.1",
     "@commitlint/config-conventional": "^17.6.1",
+    "@loadable/component": "^5.15.3",
     "@playwright/test": "1.26.1",
     "@types/fs-extra": "^11.0.1",
     "@types/node": "^18.15.11",
@@ -52,9 +53,11 @@
   },
   "dependencies": {
     "@vitejs/plugin-react": "^3.1.0",
+    "fast-glob": "^3.2.12",
     "fs-extra": "^11.1.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-router-dom": "6.4.3",
     "vite": "^4.2.1"
   }
 }

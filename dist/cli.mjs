@@ -1,9 +1,12 @@
 import { createRequire as createRequire0 } from "module"; const require = createRequire0(import.meta.url);
 import {
   CLIENT_ENTRY_PATH,
-  SERVER_ENTRY_PATH
-} from "./chunk-ZRNTDY7N.mjs";
-import "./chunk-L2DJCK3K.mjs";
+  SERVER_ENTRY_PATH,
+  pluginConfig
+} from "./chunk-CB44D3BE.mjs";
+import {
+  resolveConfig
+} from "./chunk-CXLDFJRC.mjs";
 
 // node_modules/.pnpm/cac@6.7.14/node_modules/cac/dist/index.mjs
 import { EventEmitter } from "events";
@@ -602,13 +605,16 @@ import { join, resolve } from "path";
 import fs from "fs-extra";
 import pluginReact from "@vitejs/plugin-react";
 import { pathToFileURL } from "url";
-async function bundle(root) {
+async function bundle(root, config) {
   try {
     const resolveViteConfig = (isServer) => {
       return {
         mode: "production",
         root,
-        plugins: [pluginReact()],
+        plugins: [pluginReact(), pluginConfig(config)],
+        ssr: {
+          noExternal: ["react-router-dom"]
+        },
         build: {
           ssr: isServer,
           outDir: isServer ? ".temp" : "build",
@@ -655,14 +661,15 @@ async function renderPage(render, root, clientBundle) {
   await fs.writeFile(join(root, "build", "index.html"), html);
   await fs.remove(join(root, ".temp"));
 }
-async function build(root = process.cwd()) {
-  const [clientBundle] = await bundle(root);
+async function build(root = process.cwd(), config) {
+  const [clientBundle] = await bundle(root, config);
   const serverEntryPath = resolve(root, ".temp", "ssr-entry.js");
   const { render } = await import(pathToFileURL(serverEntryPath));
   await renderPage(render, root, clientBundle);
 }
 
 // src/node/cli.ts
+import { resolve as resolve2 } from "path";
 var cli = dist_default("island").version("0.0.1").help();
 cli.command("dev [root]", "start dev server").action(async (root) => {
   const createServer = async () => {
@@ -677,6 +684,12 @@ cli.command("dev [root]", "start dev server").action(async (root) => {
   await createServer();
 });
 cli.command("build [root]", "build in production").action(async (root) => {
-  await build(root);
+  try {
+    root = resolve2(root);
+    const config = await resolveConfig(root, "build", "production");
+    await build(root, config);
+  } catch (e) {
+    console.log(e);
+  }
 });
 cli.parse();

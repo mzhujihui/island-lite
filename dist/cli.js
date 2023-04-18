@@ -2,7 +2,11 @@
 
 
 
-var _chunkLQTWTOZDjs = require('./chunk-LQTWTOZD.js');
+
+var _chunkRHJNLQTBjs = require('./chunk-RHJNLQTB.js');
+
+
+var _chunk4SWFLDUNjs = require('./chunk-4SWFLDUN.js');
 
 // node_modules/.pnpm/cac@6.7.14/node_modules/cac/dist/index.mjs
 var _events = require('events');
@@ -601,18 +605,21 @@ var _path = require('path');
 var _fsextra = require('fs-extra'); var _fsextra2 = _interopRequireDefault(_fsextra);
 var _pluginreact = require('@vitejs/plugin-react'); var _pluginreact2 = _interopRequireDefault(_pluginreact);
 var _url = require('url');
-async function bundle(root) {
+async function bundle(root, config) {
   try {
     const resolveViteConfig = (isServer) => {
       return {
         mode: "production",
         root,
-        plugins: [_pluginreact2.default.call(void 0, )],
+        plugins: [_pluginreact2.default.call(void 0, ), _chunkRHJNLQTBjs.pluginConfig.call(void 0, config)],
+        ssr: {
+          noExternal: ["react-router-dom"]
+        },
         build: {
           ssr: isServer,
           outDir: isServer ? ".temp" : "build",
           rollupOptions: {
-            input: isServer ? _chunkLQTWTOZDjs.SERVER_ENTRY_PATH : _chunkLQTWTOZDjs.CLIENT_ENTRY_PATH,
+            input: isServer ? _chunkRHJNLQTBjs.SERVER_ENTRY_PATH : _chunkRHJNLQTBjs.CLIENT_ENTRY_PATH,
             output: {
               format: isServer ? "cjs" : "esm"
             }
@@ -654,14 +661,15 @@ async function renderPage(render, root, clientBundle) {
   await _fsextra2.default.writeFile(_path.join.call(void 0, root, "build", "index.html"), html);
   await _fsextra2.default.remove(_path.join.call(void 0, root, ".temp"));
 }
-async function build(root = process.cwd()) {
-  const [clientBundle] = await bundle(root);
+async function build(root = process.cwd(), config) {
+  const [clientBundle] = await bundle(root, config);
   const serverEntryPath = _path.resolve.call(void 0, root, ".temp", "ssr-entry.js");
   const { render } = await Promise.resolve().then(() => _interopRequireWildcard(require(_url.pathToFileURL.call(void 0, serverEntryPath))));
   await renderPage(render, root, clientBundle);
 }
 
 // src/node/cli.ts
+
 var cli = dist_default("island").version("0.0.1").help();
 cli.command("dev [root]", "start dev server").action(async (root) => {
   const createServer = async () => {
@@ -676,6 +684,12 @@ cli.command("dev [root]", "start dev server").action(async (root) => {
   await createServer();
 });
 cli.command("build [root]", "build in production").action(async (root) => {
-  await build(root);
+  try {
+    root = _path.resolve.call(void 0, root);
+    const config = await _chunk4SWFLDUNjs.resolveConfig.call(void 0, root, "build", "production");
+    await build(root, config);
+  } catch (e) {
+    console.log(e);
+  }
 });
 cli.parse();

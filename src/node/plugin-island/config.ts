@@ -1,13 +1,14 @@
 import { SiteConfig } from 'shared/types/index';
 import { Plugin } from 'vite';
-import { relative } from 'path';
+import { join, relative } from 'path';
+import { PACKAGE_ROOT } from 'node/constants';
 
 const virtualModuleId = 'virtual:island-site-data';
 const resolvedVirtualModuleId = '\0' + virtualModuleId;
 
 export default function pluginConfig(
   config: SiteConfig,
-  restartServer: () => Promise<void>
+  restartServer?: () => Promise<void>
 ): Plugin {
   return {
     name: 'island:config',
@@ -20,6 +21,15 @@ export default function pluginConfig(
       if (id === resolvedVirtualModuleId) {
         return `export default ${JSON.stringify(config.siteData)}`;
       }
+    },
+    config() {
+      return {
+        resolve: {
+          alias: {
+            '@runtime': join(PACKAGE_ROOT, 'src', 'runtime', 'index.ts')
+          }
+        }
+      };
     },
     async handleHotUpdate(ctx) {
       const customWatchedFiles = [config.configPath];
