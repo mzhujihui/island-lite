@@ -1,11 +1,9 @@
 import { createRequire as createRequire0 } from "module"; const require = createRequire0(import.meta.url);
-
-// node_modules/.pnpm/tsup@6.7.0_ts-node@10.9.1_typescript@5.0.4/node_modules/tsup/assets/esm_shims.js
-import { fileURLToPath } from "url";
-import path from "path";
-var getFilename = () => fileURLToPath(import.meta.url);
-var getDirname = () => path.dirname(getFilename());
-var __dirname = /* @__PURE__ */ getDirname();
+import {
+  CLIENT_ENTRY_PATH,
+  SERVER_ENTRY_PATH
+} from "./chunk-ZRNTDY7N.mjs";
+import "./chunk-L2DJCK3K.mjs";
 
 // node_modules/.pnpm/cac@6.7.14/node_modules/cac/dist/index.mjs
 import { EventEmitter } from "events";
@@ -598,91 +596,11 @@ var CAC = class extends EventEmitter {
 var cac = (name = "") => new CAC(name);
 var dist_default = cac;
 
-// src/node/dev.ts
-import { createServer } from "vite";
-
-// src/node/plugin-island/indexHtml.ts
-import { readFile } from "fs/promises";
-
-// src/node/constants/index.ts
-import { join } from "path";
-var PACKAGE_ROOT = join(__dirname, "..");
-var CLIENT_ENTRY_PATH = join(
-  PACKAGE_ROOT,
-  "src",
-  "runtime",
-  "client-entry.tsx"
-);
-var SERVER_ENTRY_PATH = join(
-  PACKAGE_ROOT,
-  "src",
-  "runtime",
-  "ssr-entry.tsx"
-);
-var DEFAULT_HTML_PATH = join(PACKAGE_ROOT, "template.html");
-
-// src/node/plugin-island/indexHtml.ts
-function pluginIndexHtml() {
-  return {
-    name: "island:index-html",
-    apply: "serve",
-    // 插入入口 script 标签
-    transformIndexHtml(html) {
-      return {
-        html,
-        tags: [
-          {
-            tag: "script",
-            attrs: {
-              type: "module",
-              src: `/@fs/${CLIENT_ENTRY_PATH}`
-            },
-            injectTo: "body"
-          }
-        ]
-      };
-    },
-    configureServer(server) {
-      return () => {
-        server.middlewares.use(async (req, res, next) => {
-          let html = await readFile(DEFAULT_HTML_PATH, "utf-8");
-          try {
-            html = await server.transformIndexHtml(
-              req.url,
-              html,
-              req.originalUrl
-            );
-            res.statusCode = 200;
-            res.setHeader("Content-Type", "text/html");
-            res.end(html);
-          } catch (e) {
-            return next(e);
-          }
-        });
-      };
-    }
-  };
-}
-
-// src/node/dev.ts
-import pluginReact from "@vitejs/plugin-react";
-function createDevServer(root) {
-  return createServer({
-    root,
-    plugins: [pluginIndexHtml(), pluginReact()],
-    server: {
-      fs: {
-        allow: [PACKAGE_ROOT]
-      }
-    }
-  });
-}
-
 // src/node/build.ts
 import { build as viteBuild } from "vite";
-import { join as join2, resolve } from "path";
+import { join, resolve } from "path";
 import fs from "fs-extra";
-import pluginReact2 from "@vitejs/plugin-react";
+import pluginReact from "@vitejs/plugin-react";
 import { pathToFileURL } from "url";
 async function bundle(root) {
   try {
@@ -690,7 +608,7 @@ async function bundle(root) {
       return {
         mode: "production",
         root,
-        plugins: [pluginReact2()],
+        plugins: [pluginReact()],
         build: {
           ssr: isServer,
           outDir: isServer ? ".temp" : "build",
@@ -734,8 +652,8 @@ async function renderPage(render, root, clientBundle) {
         <script type="module" src="/${clientChunk?.fileName}"></script>
       </body>
     </html>`.trim();
-  await fs.writeFile(join2(root, "build", "index.html"), html);
-  await fs.remove(join2(root, ".temp"));
+  await fs.writeFile(join(root, "build", "index.html"), html);
+  await fs.remove(join(root, ".temp"));
 }
 async function build(root = process.cwd()) {
   const [clientBundle] = await bundle(root);
@@ -747,9 +665,16 @@ async function build(root = process.cwd()) {
 // src/node/cli.ts
 var cli = dist_default("island").version("0.0.1").help();
 cli.command("dev [root]", "start dev server").action(async (root) => {
-  const server = await createDevServer(root);
-  await server.listen();
-  server.printUrls();
+  const createServer = async () => {
+    const { createDevServer } = await import("./dev.mjs");
+    const server = await createDevServer(root, async () => {
+      await server.close();
+      await createServer();
+    });
+    await server.listen();
+    server.printUrls();
+  };
+  await createServer();
 });
 cli.command("build [root]", "build in production").action(async (root) => {
   await build(root);

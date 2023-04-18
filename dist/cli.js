@@ -1,5 +1,9 @@
 "use strict"; function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { newObj[key] = obj[key]; } } } newObj.default = obj; return newObj; } } function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; } function _optionalChain(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }var _module = require('module'); const require = _module.createRequire.call(void 0, import.meta.url);
 
+
+
+var _chunkLQTWTOZDjs = require('./chunk-LQTWTOZD.js');
+
 // node_modules/.pnpm/cac@6.7.14/node_modules/cac/dist/index.mjs
 var _events = require('events');
 function toArr(any) {
@@ -591,91 +595,11 @@ var CAC = class extends _events.EventEmitter {
 var cac = (name = "") => new CAC(name);
 var dist_default = cac;
 
-// src/node/dev.ts
-var _vite = require('vite');
-
-// src/node/plugin-island/indexHtml.ts
-var _promises = require('fs/promises');
-
-// src/node/constants/index.ts
-var _path = require('path');
-var PACKAGE_ROOT = _path.join.call(void 0, __dirname, "..");
-var CLIENT_ENTRY_PATH = _path.join.call(void 0, 
-  PACKAGE_ROOT,
-  "src",
-  "runtime",
-  "client-entry.tsx"
-);
-var SERVER_ENTRY_PATH = _path.join.call(void 0, 
-  PACKAGE_ROOT,
-  "src",
-  "runtime",
-  "ssr-entry.tsx"
-);
-var DEFAULT_HTML_PATH = _path.join.call(void 0, PACKAGE_ROOT, "template.html");
-
-// src/node/plugin-island/indexHtml.ts
-function pluginIndexHtml() {
-  return {
-    name: "island:index-html",
-    apply: "serve",
-    // 插入入口 script 标签
-    transformIndexHtml(html) {
-      return {
-        html,
-        tags: [
-          {
-            tag: "script",
-            attrs: {
-              type: "module",
-              src: `/@fs/${CLIENT_ENTRY_PATH}`
-            },
-            injectTo: "body"
-          }
-        ]
-      };
-    },
-    configureServer(server) {
-      return () => {
-        server.middlewares.use(async (req, res, next) => {
-          let html = await _promises.readFile.call(void 0, DEFAULT_HTML_PATH, "utf-8");
-          try {
-            html = await server.transformIndexHtml(
-              req.url,
-              html,
-              req.originalUrl
-            );
-            res.statusCode = 200;
-            res.setHeader("Content-Type", "text/html");
-            res.end(html);
-          } catch (e) {
-            return next(e);
-          }
-        });
-      };
-    }
-  };
-}
-
-// src/node/dev.ts
-var _pluginreact = require('@vitejs/plugin-react'); var _pluginreact2 = _interopRequireDefault(_pluginreact);
-function createDevServer(root) {
-  return _vite.createServer.call(void 0, {
-    root,
-    plugins: [pluginIndexHtml(), _pluginreact2.default.call(void 0, )],
-    server: {
-      fs: {
-        allow: [PACKAGE_ROOT]
-      }
-    }
-  });
-}
-
 // src/node/build.ts
-
-
+var _vite = require('vite');
+var _path = require('path');
 var _fsextra = require('fs-extra'); var _fsextra2 = _interopRequireDefault(_fsextra);
-
+var _pluginreact = require('@vitejs/plugin-react'); var _pluginreact2 = _interopRequireDefault(_pluginreact);
 var _url = require('url');
 async function bundle(root) {
   try {
@@ -688,7 +612,7 @@ async function bundle(root) {
           ssr: isServer,
           outDir: isServer ? ".temp" : "build",
           rollupOptions: {
-            input: isServer ? SERVER_ENTRY_PATH : CLIENT_ENTRY_PATH,
+            input: isServer ? _chunkLQTWTOZDjs.SERVER_ENTRY_PATH : _chunkLQTWTOZDjs.CLIENT_ENTRY_PATH,
             output: {
               format: isServer ? "cjs" : "esm"
             }
@@ -740,9 +664,16 @@ async function build(root = process.cwd()) {
 // src/node/cli.ts
 var cli = dist_default("island").version("0.0.1").help();
 cli.command("dev [root]", "start dev server").action(async (root) => {
-  const server = await createDevServer(root);
-  await server.listen();
-  server.printUrls();
+  const createServer = async () => {
+    const { createDevServer } = await Promise.resolve().then(() => _interopRequireWildcard(require("./dev.js")));
+    const server = await createDevServer(root, async () => {
+      await server.close();
+      await createServer();
+    });
+    await server.listen();
+    server.printUrls();
+  };
+  await createServer();
 });
 cli.command("build [root]", "build in production").action(async (root) => {
   await build(root);
