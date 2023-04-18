@@ -2,7 +2,7 @@ import { readFile } from 'fs/promises';
 import { Plugin } from 'vite';
 import { CLIENT_ENTRY_PATH, DEFAULT_HTML_PATH } from '../constants';
 
-export function pluginIndexHtml(): Plugin {
+export default function pluginIndexHtml(): Plugin {
   return {
     name: 'island:index-html',
     apply: 'serve',

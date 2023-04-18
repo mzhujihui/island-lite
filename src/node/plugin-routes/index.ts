@@ -8,7 +8,7 @@ interface PluginOption {
 const virtualModuleId = 'virtual:island-routes';
 const resolvedVirtualModuleId = '\0' + virtualModuleId;
 
-export function pluginRoutes(options: PluginOption): Plugin {
+export default function pluginRoutes(options: PluginOption): Plugin {
   const routeService = new RouteService(options.root);
   return {
     name: 'island:routes',
