@@ -11,7 +11,7 @@ export async function createDevServer(
   console.log('配置文件信息', config.siteData);
   return createServer({
     root: PACKAGE_ROOT,
-    plugins: createVitePlugins(config, restartServer),
+    plugins: await createVitePlugins(config, restartServer),
     server: {
       fs: {
         allow: [PACKAGE_ROOT]

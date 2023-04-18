@@ -24,6 +24,16 @@ A note[^1]
 | --- | :-- | --: | :-: |
 | 1   | 2   |   3 |  4  |
 
+## code block
+```ts
+import { pluginMdxRollup } from './pluginMdxRollup';
+import { Plugin } from 'vite';
+
+export default async function createMdxPlugins(): Promise<Plugin> {
+  return [await pluginMdxRollup()];
+}
+```
+
 ## Tasklist
 
 - [ ] to do

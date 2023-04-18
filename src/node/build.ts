@@ -10,11 +10,13 @@ import { createVitePlugins } from './vitePlugins';
 
 export async function bundle(root: string, config: SiteConfig) {
   try {
-    const resolveViteConfig = (isServer: boolean): InlineConfig => {
+    const resolveViteConfig = async (
+      isServer: boolean
+    ): Promise<InlineConfig> => {
       return {
         mode: 'production',
         root,
-        plugins: createVitePlugins(config),
+        plugins: await createVitePlugins(config),
         ssr: {
           noExternal: ['react-router-dom']
         },
@@ -33,9 +35,9 @@ export async function bundle(root: string, config: SiteConfig) {
     console.log('Building client + server bundles...');
     const [clientBundle, serverBundle] = await Promise.all([
       // client build
-      viteBuild(resolveViteConfig(false)),
+      viteBuild(await resolveViteConfig(false)),
       // server build
-      viteBuild(resolveViteConfig(true))
+      viteBuild(await resolveViteConfig(true))
     ]);
     return [clientBundle, serverBundle] as [RollupOutput, RollupOutput];
   } catch (e) {

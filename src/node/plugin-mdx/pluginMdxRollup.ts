@@ -4,9 +4,12 @@ import rehypePluginAutolinkHeadings from 'rehype-autolink-headings';
 import rehypeSlug from 'rehype-slug';
 import remarkPluginMDXFrontMatter from 'remark-mdx-frontmatter';
 import remarkPluginFrontmatter from 'remark-frontmatter';
+import rehypePluginPreWrapper from './rehypePlugins/preWrapper';
+import rehypePluginShiki from './rehypePlugins/shiki';
+import { getHighlighter } from 'shiki';
 import type { Plugin } from 'vite';
 
-export function pluginMdxRollup() {
+export async function pluginMdxRollup() {
   return pluginMdx({
     remarkPlugins: [
       remarkGFM,
@@ -25,6 +28,15 @@ export function pluginMdxRollup() {
             type: 'text',
             value: '#'
           }
+        }
+      ],
+      rehypePluginPreWrapper,
+      [
+        rehypePluginShiki,
+        {
+          highlighter: await getHighlighter({
+            theme: 'nord'
+          })
         }
       ]
     ]
