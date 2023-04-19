@@ -3,6 +3,7 @@ import { RouteService } from './RouteService';
 
 interface PluginOption {
   root: string;
+  isSSR: boolean;
 }
 
 const virtualModuleId = 'virtual:island-routes';
@@ -19,7 +20,7 @@ export default function pluginRoutes(options: PluginOption): Plugin {
     },
     load(id) {
       if (id === resolvedVirtualModuleId) {
-        return routeService.generateRoutesCode();
+        return routeService.generateRoutesCode(options.isSSR || false);
       }
     },
     async configResolved() {

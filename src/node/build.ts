@@ -1,12 +1,13 @@
 import { InlineConfig, build as viteBuild } from 'vite';
 import { CLIENT_ENTRY_PATH, SERVER_ENTRY_PATH } from './constants';
 import type { RollupOutput } from 'rollup';
-import { join, resolve } from 'path';
+import { dirname, join, resolve } from 'path';
 import fs from 'fs-extra';
 // import ora from 'ora';
 import { pathToFileURL } from 'url';
 import { SiteConfig } from 'shared/types';
 import { createVitePlugins } from './vitePlugins';
+import { Route } from './plugin-routes';
 
 export async function bundle(root: string, config: SiteConfig) {
   try {
@@ -16,7 +17,7 @@ export async function bundle(root: string, config: SiteConfig) {
       return {
         mode: 'production',
         root,
-        plugins: await createVitePlugins(config),
+        plugins: await createVitePlugins(config, undefined, isServer),
         ssr: {
           noExternal: ['react-router-dom']
         },
@@ -46,15 +47,20 @@ export async function bundle(root: string, config: SiteConfig) {
 }
 
 export async function renderPage(
-  render: () => string,
+  render: (pagePath: string) => string,
   root: string,
-  clientBundle: RollupOutput
+  clientBundle: RollupOutput,
+  routes: Route[]
 ) {
-  const appHtml = render();
   const clientChunk = clientBundle.output.find(
     (chunk) => chunk.type === 'chunk' && chunk.isEntry
   );
-  const html = `
+  console.log('Rendering page in server side...');
+  await Promise.all(
+    routes.map(async (route) => {
+      const routePath = route.path;
+      const appHtml = render(routePath);
+      const html = `
     <!DOCTYPE html>
     <html>
       <head>
@@ -68,9 +74,14 @@ export async function renderPage(
         <script type="module" src="/${clientChunk?.fileName}"></script>
       </body>
     </html>`.trim();
-  // const spinner = ora();
-  // spinner.start("Building client + server bundles...");
-  await fs.writeFile(join(root, 'build', 'index.html'), html);
+      const fileName = routePath.endsWith('/')
+        ? `${routePath}index.html`
+        : `${routePath}/index.html`;
+      await fs.ensureDir(join(root, 'build', dirname(fileName)));
+      await fs.writeFile(join(root, 'build', fileName), html);
+    })
+  );
+
   await fs.remove(join(root, '.temp'));
 }
 
@@ -79,7 +90,11 @@ export async function build(root: string = process.cwd(), config: SiteConfig) {
   const [clientBundle] = await bundle(root, config);
   // 2. 引入 server-entry 模块
   const serverEntryPath = resolve(root, '.temp', 'ssr-entry.js');
+  const { render, routes } = await import(pathToFileURL(serverEntryPath));
   // 3. 服务端渲染，产出 HTML
-  const { render } = await import(pathToFileURL(serverEntryPath));
-  await renderPage(render, root, clientBundle);
+  try {
+    await renderPage(render, root, clientBundle, routes);
+  } catch (e) {
+    console.log('Render page error.\n', e);
+  }
 }
