@@ -12,5 +12,6 @@
       "shared/*": ["shared/*"],
       "@runtime": ["runtime/index.ts"]
     }
-  }
+  },
+  "include": ["e2e/**/*.ts", "src/**/*"]
 }

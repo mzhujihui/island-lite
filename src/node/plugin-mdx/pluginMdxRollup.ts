@@ -10,7 +10,7 @@ import { getHighlighter } from 'shiki';
 import remarkPluginToc from './remarkPlugins/toc';
 import type { Plugin } from 'vite';
 
-export async function pluginMdxRollup() {
+async function pluginMdxRollup(): Promise<Plugin> {
   return pluginMdx({
     remarkPlugins: [
       remarkGFM,
@@ -44,3 +44,5 @@ export async function pluginMdxRollup() {
     ]
   }) as unknown as Plugin;
 }
+
+export default pluginMdxRollup;
