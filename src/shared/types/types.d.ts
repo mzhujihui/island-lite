@@ -3,3 +3,8 @@ declare module 'virtual:island-site-data' {
   const siteData: UserConfig;
   export default siteData;
 }
+
+declare module 'virtual:island-routes' {
+  import type { Route } from 'node/plugin-routes';
+  export const routes: Route[];
+}
