@@ -26,6 +26,7 @@
   "devDependencies": {
     "@commitlint/cli": "^17.6.1",
     "@commitlint/config-conventional": "^17.6.1",
+    "@iconify-json/carbon": "^1.1.16",
     "@loadable/component": "^5.15.3",
     "@playwright/test": "1.26.1",
     "@types/fs-extra": "^11.0.1",
@@ -56,6 +57,7 @@
     "remark-rehype": "^10.1.0",
     "remark-stringify": "^10.0.2",
     "rollup": "^3.20.4",
+    "sass": "^1.62.0",
     "tsup": "^6.7.0",
     "tsx": "^3.12.6",
     "typescript": "^5.0.4",
