@@ -1,7 +1,6 @@
 import { Hero } from 'shared/types';
 import styles from './index.module.scss';
 import { Button } from '../Button/index';
-
 export function HomeHero(props: { hero: Hero }) {
   const { hero } = props;
   return (

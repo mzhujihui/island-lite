@@ -31,6 +31,18 @@ export default function pluginMdxHMR(): Plugin {
         }
         return result;
       }
+    },
+    handleHotUpdate(ctx) {
+      /* vite@4.2.1 相比 3.1.4，不再需要此方法 */
+      // if (/\.mdx?/.test(ctx.file)) {
+      //   ctx.server.ws.send({
+      //     type: 'custom',
+      //     event: 'mdx-changed',
+      //     data: {
+      //       filePath: ctx.file
+      //     }
+      //   });
+      // }
     }
   };
 }

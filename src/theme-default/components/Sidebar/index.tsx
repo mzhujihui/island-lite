@@ -8,7 +8,6 @@ interface SidebarProps {
 
 export function Sidebar(props: SidebarProps) {
   const { sidebarData, pathname } = props;
-
   const renderGroupItem = (item: SidebarItem) => {
     const active = item.link === pathname;
     return (

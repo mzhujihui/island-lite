@@ -1,28 +1,29 @@
 import { ComponentType } from 'react';
 import { UserConfig as ViteConfiguration } from 'vite';
 
-export interface NavItemWithLink {
+export interface Header {
+  id: string;
   text: string;
-  link: string;
+  depth: number;
 }
 
-export interface SidebarGroup {
-  text: string;
-  items: SidebarItem[];
-}
-
-export interface SidebarItem {
+export type NavItemWithLink = {
   text: string;
   link: string;
-}
+};
 
 export interface Sidebar {
   [path: string]: SidebarGroup[];
 }
 
-export interface Footer {
-  message: string;
+export interface SidebarGroup {
+  text?: string;
+  items: SidebarItem[];
 }
+
+export type SidebarItem =
+  | { text: string; link: string }
+  | { text: string; link?: string; items: SidebarItem[] };
 
 export interface ThemeConfig {
   nav?: NavItemWithLink[];
@@ -30,11 +31,16 @@ export interface ThemeConfig {
   footer?: Footer;
 }
 
+export interface Footer {
+  message?: string;
+  copyright?: string;
+}
+
 export interface UserConfig {
-  title: string;
-  description: string;
-  themeConfig: ThemeConfig;
-  vite: ViteConfiguration;
+  title?: string;
+  description?: string;
+  themeConfig?: ThemeConfig;
+  vite?: ViteConfiguration;
 }
 
 export interface SiteConfig {
@@ -76,12 +82,6 @@ export interface FrontMatter {
   hero?: Hero;
 }
 
-export interface Header {
-  id: string;
-  text: string;
-  depth: number;
-}
-
 export interface PageData {
   siteData: UserConfig;
   pagePath: string;
@@ -92,6 +92,7 @@ export interface PageData {
 
 export interface PageModule {
   default: ComponentType;
-  frontmatter: FrontMatter;
+  frontmatter?: FrontMatter;
+  toc?: Header[];
   [key: string]: unknown;
 }

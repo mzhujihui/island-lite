@@ -1,5 +1,4 @@
 .nav {
-  background-color: var(--island-c-bg);
   padding-left: max(
     32px,
     calc(32px + (100vw - var(--island-layout-max-width)) / 2)
@@ -8,17 +7,18 @@
     32px,
     calc(32px + (100vw - var(--island-layout-max-width)) / 2)
   );
+  background-color: var(--island-c-bg);
+}
+
+.link:hover {
+  color: var(--island-c-brand);
+  transition: color 0.2s;
 }
 
 .link {
   display: block;
   font-size: 14px;
   font-weight: 500;
-}
-
-.link:hover {
-  color: var(--island-c-brand);
-  transition: color 0.2s;
 }
 
 .social-link-icon {

@@ -68,8 +68,8 @@
 }
 
 /**
-    * Paragraph and inline elements
-    * -------------------------------------------------------------------------- */
+   * Paragraph and inline elements
+   * -------------------------------------------------------------------------- */
 
 .island-doc p,
 .island-doc summary {
@@ -88,7 +88,7 @@
   transition: border-color 0.5s;
 }
 
-.island-doc blockquote>p {
+.island-doc blockquote > p {
   margin: 0;
   font-size: 16px;
   color: var(--island-c-text-2);
@@ -111,8 +111,8 @@
 }
 
 /**
-    * Lists
-    * -------------------------------------------------------------------------- */
+   * Lists
+   * -------------------------------------------------------------------------- */
 
 .island-doc ul,
 .island-doc ol {
@@ -128,18 +128,18 @@
   list-style: decimal;
 }
 
-.island-doc li+li {
+.island-doc li + li {
   margin-top: 8px;
 }
 
-.island-doc li>ol,
-.island-doc li>ul {
+.island-doc li > ol,
+.island-doc li > ul {
   margin: 8px 0 0;
 }
 
 /**
-    * Table
-    * -------------------------------------------------------------------------- */
+   * Table
+   * -------------------------------------------------------------------------- */
 
 .island-doc table {
   display: block;
@@ -174,8 +174,8 @@
 }
 
 /**
-    * Decorational elements
-    * -------------------------------------------------------------------------- */
+   * Decorational elements
+   * -------------------------------------------------------------------------- */
 
 .island-doc hr {
   margin: 16px 0;
@@ -184,8 +184,8 @@
 }
 
 /**
-    * Custom Block
-    * -------------------------------------------------------------------------- */
+   * Custom Block
+   * -------------------------------------------------------------------------- */
 
 .island-doc .custom-block {
   margin: 16px 0;
@@ -227,15 +227,15 @@
 }
 
 /**
-    * Code
-    * -------------------------------------------------------------------------- */
+   * Code
+   * -------------------------------------------------------------------------- */
 
 /* inline code */
-.island-doc :not(pre, h1, h2, h3, h4, h5, h6)>code {
+.island-doc :not(pre, h1, h2, h3, h4, h5, h6) > code {
   font-size: var(--island-code-font-size);
 }
 
-.island-doc :not(pre, div)>code {
+.island-doc :not(pre, div) > code {
   border-radius: 4px;
   padding: 3px 6px;
   color: var(--island-c-text-code);
@@ -243,18 +243,18 @@
   transition: color 0.5s, background-color 0.5s;
 }
 
-.island-doc h1>code,
-.island-doc h2>code,
-.island-doc h3>code {
+.island-doc h1 > code,
+.island-doc h2 > code,
+.island-doc h3 > code {
   font-size: 0.9em;
 }
 
-.island-doc a>code {
+.island-doc a > code {
   color: var(--island-c-brand);
   transition: color 0.25s;
 }
 
-.island-doc a:hover>code {
+.island-doc a:hover > code {
   color: var(--island-c-brand-dark);
 }
 
@@ -279,9 +279,12 @@
   }
 }
 
-.island-doc div[class*='language-']+div[class*='language-'],
-.island-doc div[class$='-api']+div[class*='language-'],
-.island-doc div[class*='language-']+div[class$='-api']>div[class*='language-'] {
+.island-doc div[class*='language-'] + div[class*='language-'],
+.island-doc div[class$='-api'] + div[class*='language-'],
+.island-doc
+  div[class*='language-']
+  + div[class$='-api']
+  > div[class*='language-'] {
   margin-top: -8px;
 }
 
@@ -330,7 +333,7 @@
   display: inline-block;
 }
 
-.island-doc [class*='language-']>button.copy {
+.island-doc [class*='language-'] > button.copy {
   position: absolute;
   top: 8px;
   right: 8px;
@@ -351,24 +354,24 @@
   transition: opacity 0.4s;
 }
 
-.island-doc [class*='language-']:hover>button.copy,
-.island-doc [class*='language-']>button.copy:focus {
+.island-doc [class*='language-']:hover > button.copy,
+.island-doc [class*='language-'] > button.copy:focus {
   opacity: 1;
 }
 
-.island-doc [class*='language-']>button.copy:hover {
+.island-doc [class*='language-'] > button.copy:hover {
   background-color: var(--island-code-copy-code-hover-bg);
 }
 
-.island-doc [class*='language-']>button.copy.copied,
-.island-doc [class*='language-']>button.copy:hover.copied {
+.island-doc [class*='language-'] > button.copy.copied,
+.island-doc [class*='language-'] > button.copy:hover.copied {
   border-radius: 0 4px 4px 0;
   background-color: var(--island-code-copy-code-hover-bg);
   background-image: var(--island-icon-copied);
 }
 
-.island-doc [class*='language-']>button.copy.copied::before,
-.island-doc [class*='language-']>button.copy:hover.copied::before {
+.island-doc [class*='language-'] > button.copy.copied::before,
+.island-doc [class*='language-'] > button.copy:hover.copied::before {
   position: relative;
   left: -65px;
   display: block;
@@ -385,7 +388,7 @@
   content: 'Copied';
 }
 
-.island-doc [class*='language-']>span.lang {
+.island-doc [class*='language-'] > span.lang {
   position: absolute;
   top: 6px;
   right: 12px;
@@ -396,7 +399,7 @@
   transition: color 0.4s, opacity 0.4s;
 }
 
-.island-doc [class*='language-']:hover>button.copy+span.lang,
-.island-doc [class*='language-']>button.copy:focus+span.lang {
+.island-doc [class*='language-']:hover > button.copy + span.lang,
+.island-doc [class*='language-'] > button.copy:focus + span.lang {
   opacity: 0;
 }
