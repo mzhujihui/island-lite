@@ -1,5 +1,6 @@
 import { usePageData } from '@runtime';
 import { Nav } from '../components/Nav';
+import { HomeLayout } from './HomeLayout/index';
 import '../styles/base.css';
 import '../styles/vars.css';
 import 'uno.css';
@@ -10,9 +11,9 @@ export function Layout() {
 
   const getContent = () => {
     if (pageType === 'home') {
-      return <div>主页内容</div>;
+      return <HomeLayout />;
     } else if (pageType === 'doc') {
-      return <div>正文内容</div>;
+      return <div>正文页面</div>;
     } else {
       return <div>404 页面</div>;
     }
@@ -21,6 +22,7 @@ export function Layout() {
   return (
     <div>
       <Nav />
+      {getContent()}
     </div>
   );
 }
