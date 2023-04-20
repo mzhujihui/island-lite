@@ -2,6 +2,7 @@ import { SiteConfig } from 'shared/types/index';
 import { Plugin } from 'vite';
 import { join, relative } from 'path';
 import { PACKAGE_ROOT } from 'node/constants';
+import sirv from 'sirv';
 
 const virtualModuleId = 'virtual:island-site-data';
 const resolvedVirtualModuleId = '\0' + virtualModuleId;
@@ -48,6 +49,10 @@ export default function pluginConfig(
         // 重启 Dev Server
         await restartServer();
       }
+    },
+    configureServer(server) {
+      const publicDir = join(config.root, 'public');
+      server.middlewares.use(sirv(publicDir));
     }
   };
 }

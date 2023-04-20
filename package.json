@@ -82,6 +82,7 @@
     "remark-gfm": "^3.0.1",
     "remark-mdx-frontmatter": "^2.1.1",
     "shiki": "^0.14.1",
+    "sirv": "^2.0.2",
     "unocss": "^0.51.4",
     "vite": "^4.2.1"
   }
